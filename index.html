@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Art on Wheels — Autofotografie von Kristina Michaelis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;600;700;800&family=Yellowtail&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A0D;
+    --bg-alt:#131318;
+    --bg-alt-2:#18181F;
+    --violet:#6D5BEC;
+    --violet-glow:#9B8DFF;
+    --ice:#B9C6FF;
+    --white:#F5F5F7;
+    --muted:#9B99A6;
+    --muted-dim:#6E6C78;
+    --line:rgba(155,141,255,0.16);
+    --line-strong:rgba(155,141,255,0.4);
+    --display: 'Big Shoulders Display', sans-serif;
+    --script: 'Yellowtail', cursive;
+    --body: 'Manrope', sans-serif;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--bg);
+    color:var(--white);
+    font-family:var(--body);
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{ color:inherit; text-decoration:none; }
+  img,svg{ display:block; max-width:100%; }
+
+  .wrap{
+    max-width:1200px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    padding:22px 0;
+    transition:background .3s ease, padding .3s ease, border-color .3s ease;
+    border-bottom:1px solid transparent;
+  }
+  header.scrolled{
+    background:rgba(10,10,13,0.86);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
+  }
+  nav.wrap{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .logo{
+    display:flex;
+    align-items:center;
+    white-space:nowrap;
+  }
+  .logo-img{
+    height:58px;
+    width:auto;
+    display:block;
+  }
+  footer .logo-img{ height:74px; }
+
+  .nav-links{
+    display:flex;
+    align-items:center;
+    gap:36px;
+  }
+  .nav-links a{
+    font-size:15px;
+    color:var(--muted);
+    transition:color .2s ease;
+    position:relative;
+  }
+  .nav-links a:hover{ color:var(--white); }
+  .nav-links a.active{ color:var(--white); }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-family:var(--body);
+    font-weight:700;
+    font-size:15px;
+    padding:13px 28px;
+    border-radius:999px;
+    cursor:pointer;
+    border:1px solid transparent;
+    transition:transform .25s ease, box-shadow .25s ease, background .25s ease, border-color .25s ease;
+  }
+  .btn-primary{
+    background:var(--violet);
+    color:#fff;
+    box-shadow:0 0 0 rgba(109,91,236,0);
+  }
+  .btn-primary:hover{
+    box-shadow:0 0 28px rgba(109,91,236,0.65);
+    transform:translateY(-1px);
+  }
+  .btn-ghost{
+    background:transparent;
+    color:var(--white);
+    border-color:var(--line-strong);
+  }
+  .btn-ghost:hover{
+    border-color:var(--violet-glow);
+    box-shadow:0 0 20px rgba(155,141,255,0.25);
+  }
+  .nav-cta{ padding:11px 22px; font-size:14px; }
+
+  .menu-toggle{
+    display:none;
+    flex-direction:column;
+    gap:5px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:6px;
+  }
+  .menu-toggle span{
+    width:24px; height:2px; background:var(--white); display:block;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding-top:120px;
+    overflow:hidden;
+  }
+  .hero-glow-bg{
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 30%, rgba(109,91,236,0.18), transparent 60%),
+      radial-gradient(ellipse 50% 40% at 20% 80%, rgba(155,141,255,0.10), transparent 60%);
+    pointer-events:none;
+  }
+  .hero-art{
+    position:absolute;
+    right:-4%;
+    top:50%;
+    transform:translateY(-50%);
+    width:min(58vw, 780px);
+    opacity:0.9;
+    pointer-events:none;
+  }
+  .hero-art svg{ width:100%; height:auto; }
+
+  .trail{
+    fill:none;
+    stroke-linecap:round;
+    filter:drop-shadow(0 0 6px currentColor);
+    stroke-dasharray:340;
+    stroke-dashoffset:340;
+    animation:draw 1.8s cubic-bezier(.2,.7,.3,1) forwards;
+  }
+  .trail.t2{ animation-delay:.15s; }
+  .trail.t3{ animation-delay:.3s; }
+  .car-line{
+    fill:none;
+    stroke:var(--violet-glow);
+    stroke-width:2.4;
+    filter:drop-shadow(0 0 8px rgba(155,141,255,0.7));
+    stroke-dasharray:1400;
+    stroke-dashoffset:1400;
+    animation:draw-car 2.2s cubic-bezier(.2,.7,.3,1) forwards .25s;
+  }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  @keyframes draw-car{ to{ stroke-dashoffset:0; } }
+
+  .hero-content{
+    position:relative;
+    z-index:2;
+    max-width:640px;
+  }
+  .eyebrow{
+    color:var(--muted);
+    font-size:15px;
+    margin-bottom:22px;
+    opacity:0;
+    animation:rise .7s ease forwards .5s;
+  }
+  h1.headline{
+    font-family:var(--display);
+    font-weight:700;
+    text-transform:uppercase;
+    font-size:clamp(38px, 5.4vw, 68px);
+    line-height:1.02;
+    letter-spacing:0.5px;
+    opacity:0;
+    animation:rise .8s ease forwards .65s;
+  }
+  h1.headline .accent{
+    font-family:var(--script);
+    text-transform:none;
+    color:var(--violet-glow);
+    font-weight:400;
+    font-size:1.35em;
+    letter-spacing:0;
+    filter:drop-shadow(0 0 14px rgba(155,141,255,0.6));
+  }
+  .sub{
+    margin-top:26px;
+    color:var(--muted);
+    font-size:18px;
+    max-width:480px;
+    opacity:0;
+    animation:rise .8s ease forwards .85s;
+  }
+  .hero-actions{
+    margin-top:38px;
+    display:flex;
+    gap:18px;
+    flex-wrap:wrap;
+    opacity:0;
+    animation:rise .8s ease forwards 1.05s;
+  }
+  @keyframes rise{
+    from{ opacity:0; transform:translateY(16px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .scroll-cue{
+    position:absolute;
+    bottom:36px;
+    left:32px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:var(--muted-dim);
+    font-size:13px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+  }
+  .scroll-cue .line{
+    width:32px; height:1px; background:var(--muted-dim);
+  }
+
+  /* ---------- SECTION LABELS ---------- */
+  .section{ padding:120px 0; position:relative; }
+  .section-inner{ position:relative; }
+  h2.section-title{
+    font-family:var(--display);
+    text-transform:uppercase;
+    font-weight:700;
+    font-size:clamp(28px, 3.4vw, 42px);
+    letter-spacing:0.5px;
+    max-width:600px;
+  }
+  .section-lede{
+    color:var(--muted);
+    font-size:17px;
+    max-width:480px;
+    margin-top:14px;
+  }
+
+  /* ---------- INTRO / SPEC PLATE ---------- */
+  .intro{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:64px;
+    align-items:center;
+  }
+  .intro-text p{
+    font-size:19px;
+    color:#DEDCE4;
+    max-width:480px;
+  }
+  .intro-text .quote{
+    margin-top:28px;
+    font-family:var(--script);
+    font-size:28px;
+    color:var(--violet-glow);
+    filter:drop-shadow(0 0 10px rgba(155,141,255,0.4));
+  }
+  .intro-text .signature{
+    margin-top:10px;
+    color:var(--muted-dim);
+    font-size:14px;
+    letter-spacing:1px;
+  }
+
+  .plate{
+    border:1px solid var(--line-strong);
+    border-radius:6px;
+    background:linear-gradient(180deg, var(--bg-alt), var(--bg-alt-2));
+    padding:36px;
+    position:relative;
+  }
+  .plate::before{
+    content:'';
+    position:absolute;
+    inset:6px;
+    border:1px solid rgba(155,141,255,0.12);
+    border-radius:3px;
+    pointer-events:none;
+  }
+  .plate-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    padding:18px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .plate-row:last-child{ border-bottom:none; }
+  .plate-num{
+    font-family:var(--display);
+    font-size:40px;
+    font-weight:700;
+    color:var(--white);
+  }
+  .plate-label{
+    font-size:14px;
+    color:var(--muted);
+    text-align:right;
+    max-width:220px;
+  }
+
+  /* ---------- GALLERY TEASER ---------- */
+  .cat-grid{
+    margin-top:56px;
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:24px;
+  }
+  .cat-card{
+    position:relative;
+    border-radius:10px;
+    border:1px solid var(--line);
+    overflow:hidden;
+    aspect-ratio:4/3;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding:26px;
+    transition:border-color .3s ease, transform .3s ease;
+  }
+  .cat-card:nth-child(1){ background:radial-gradient(ellipse at 30% 20%, #201a3d, #0c0c10 70%); }
+  .cat-card:nth-child(2){ background:radial-gradient(ellipse at 70% 30%, #1a1530, #0c0c10 70%); }
+  .cat-card:nth-child(3){ background:radial-gradient(ellipse at 40% 80%, #1c1836, #0c0c10 70%); }
+  .cat-card:nth-child(4){ background:radial-gradient(ellipse at 60% 60%, #191428, #0c0c10 70%); }
+  .cat-card:hover{
+    border-color:var(--violet-glow);
+    transform:translateY(-3px);
+  }
+  .cat-tag{
+    font-family:var(--display);
+    text-transform:uppercase;
+    font-weight:700;
+    font-size:22px;
+    letter-spacing:0.5px;
+    margin-bottom:6px;
+  }
+  .cat-caption{
+    color:var(--muted);
+    font-size:14.5px;
+  }
+
+  /* ---------- ABLAUF / TIMELINE ---------- */
+  .timeline{
+    margin-top:64px;
+    display:grid;
+    grid-template-columns:repeat(5, 1fr);
+    gap:0;
+    position:relative;
+  }
+  .timeline::before{
+    content:'';
+    position:absolute;
+    top:22px;
+    left:0; right:0;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--line-strong) 8%, var(--line-strong) 92%, transparent);
+  }
+  .tl-step{
+    padding:0 16px 0 0;
+    position:relative;
+  }
+  .tl-num{
+    width:44px; height:44px;
+    border-radius:50%;
+    border:1px solid var(--violet-glow);
+    color:var(--violet-glow);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--display);
+    font-weight:700;
+    font-size:16px;
+    background:var(--bg);
+    position:relative;
+    z-index:2;
+    box-shadow:0 0 16px rgba(155,141,255,0.25);
+  }
+  .tl-title{
+    margin-top:20px;
+    font-family:var(--display);
+    text-transform:uppercase;
+    font-weight:600;
+    font-size:17px;
+    letter-spacing:0.3px;
+  }
+  .tl-desc{
+    margin-top:8px;
+    color:var(--muted);
+    font-size:14.5px;
+    padding-right:12px;
+  }
+
+  /* ---------- FINAL CTA ---------- */
+  .cta-band{
+    padding:110px 0;
+    text-align:center;
+    position:relative;
+    background:radial-gradient(ellipse 60% 100% at 50% 50%, rgba(109,91,236,0.14), transparent 70%);
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .cta-band h2{
+    font-family:var(--display);
+    text-transform:uppercase;
+    font-weight:700;
+    font-size:clamp(30px, 4.2vw, 50px);
+    max-width:680px;
+    margin:0 auto;
+  }
+  .cta-band .sub{
+    margin:20px auto 0;
+    color:var(--muted);
+    font-size:17px;
+    max-width:440px;
+    animation:none; opacity:1;
+  }
+  .cta-band .hero-actions{
+    justify-content:center;
+    margin-top:36px;
+    opacity:1;
+    animation:none;
+  }
+  .response-note{
+    margin-top:22px;
+    color:var(--muted-dim);
+    font-size:13.5px;
+    letter-spacing:0.3px;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    padding:56px 0 36px;
+  }
+  .footer-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap:32px;
+    padding-bottom:36px;
+    border-bottom:1px solid var(--line);
+  }
+  .footer-links{
+    display:flex;
+    gap:48px;
+    flex-wrap:wrap;
+  }
+  .footer-col h4{
+    font-size:13px;
+    color:var(--muted-dim);
+    letter-spacing:1px;
+    margin-bottom:14px;
+    font-weight:600;
+  }
+  .footer-col a{
+    display:block;
+    color:var(--muted);
+    font-size:14.5px;
+    margin-bottom:10px;
+    transition:color .2s ease;
+  }
+  .footer-col a:hover{ color:var(--white); }
+  .footer-bottom{
+    margin-top:24px;
+    display:flex;
+    justify-content:space-between;
+    color:var(--muted-dim);
+    font-size:13px;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 980px){
+    .intro{ grid-template-columns:1fr; }
+    .hero-art{ opacity:0.35; width:80vw; right:-10%; }
+    .cat-grid{ grid-template-columns:1fr 1fr; }
+    .timeline{ grid-template-columns:1fr 1fr; row-gap:40px; }
+    .timeline::before{ display:none; }
+  }
+  @media (max-width: 640px){
+    .wrap{ padding:0 22px; }
+    .nav-links{
+      position:fixed;
+      top:64px; left:0; right:0;
+      background:rgba(10,10,13,0.98);
+      backdrop-filter:blur(14px);
+      flex-direction:column;
+      align-items:flex-start;
+      gap:0;
+      padding:8px 22px 20px;
+      border-bottom:1px solid var(--line);
+      transform:translateY(-130%);
+      transition:transform .3s ease;
+    }
+    .nav-links.open{ transform:translateY(0); }
+    .nav-links a{ padding:14px 0; width:100%; border-bottom:1px solid var(--line); }
+    .nav-cta{ display:none; }
+    .menu-toggle{ display:flex; }
+    .hero{ padding-top:100px; min-height:auto; padding-bottom:80px; }
+    .hero-art{ position:relative; width:100%; right:0; top:0; transform:none; margin-top:40px; opacity:0.5; }
+    .section{ padding:80px 0; }
+    .cat-grid{ grid-template-columns:1fr; }
+    .timeline{ grid-template-columns:1fr; }
+    .plate{ padding:26px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <nav class="wrap">
+    <a href="#home" class="logo">
+      <img class="logo-img" src="logo.png" alt="Art on Wheels — Capture. Create. Inspire.">
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#home" class="active">Home</a>
+      <a href="#portfolio">Portfolio</a>
+      <a href="#ueber-mich">Über mich</a>
+      <a href="#preise">Preise</a>
+      <a href="#kontakt" class="btn btn-primary nav-cta">Shooting anfragen</a>
+    </div>
+    <button class="menu-toggle" id="menuToggle" aria-label="Menü öffnen">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-glow-bg"></div>
+
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 600 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- light trails -->
+        <path class="trail t1" style="color:#6D5BEC" stroke="#6D5BEC" stroke-width="2" d="M20,90 C 160,70 260,70 580,60"/>
+        <path class="trail t2" style="color:#9B8DFF" stroke="#9B8DFF" stroke-width="1.5" d="M0,130 C 180,150 320,150 600,135"/>
+        <path class="trail t3" style="color:#B9C6FF" stroke="#B9C6FF" stroke-width="1.2" d="M40,270 C 200,290 380,292 590,278"/>
+        <!-- simple car silhouette (side profile) -->
+        <path class="car-line" d="
+          M90,210
+          C 95,175 130,150 175,150
+          L 230,150
+          C 250,120 285,105 320,105
+          C 355,105 385,120 405,150
+          L 460,150
+          C 490,150 515,165 520,195
+          L 520,210
+          M90,210 L 520,210
+          M150,210 a28,28 0 1 0 0.1,0
+          M430,210 a28,28 0 1 0 0.1,0
+        "/>
+      </svg>
+    </div>
+
+    <div class="wrap">
+      <div class="hero-content">
+        <p class="eyebrow">Autofotografie · Kristina Michaelis</p>
+        <h1 class="headline">Dein Auto verdient<br>mehr als ein Foto.<br>Es verdient <span class="accent">Kunst</span>.</h1>
+        <p class="sub">Professionelle Autofotografie für Menschen und Marken, die jedes Detail zählen lassen — von der ersten Idee bis zum fertigen Bild.</p>
+        <div class="hero-actions">
+          <a href="#kontakt" class="btn btn-primary">Shooting anfragen</a>
+          <a href="#portfolio" class="btn btn-ghost">Portfolio ansehen</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-cue"><span class="line"></span> Scroll</div>
+  </section>
+
+  <!-- KURZVORSTELLUNG -->
+  <section class="section" id="ueber-mich">
+    <div class="wrap section-inner">
+      <div class="intro">
+        <div class="intro-text">
+          <h2 class="section-title" style="margin-bottom:24px;">Fotografin mit einem Blick für Linien, Licht und Blech</h2>
+          <p>Ich bin Kristina Michaelis. Ich fange die Persönlichkeit eines Fahrzeugs ein — seine Form, seinen Charakter, seine Geschichte. Ob privates Liebhaberstück oder Firmenflotte: Ich verwandle es in Bilder, die im Gedächtnis bleiben.</p>
+          <p class="quote">„Jedes Auto hat eine Geschichte. Ich erzähle sie mit Licht."</p>
+          <p class="signature">— Kristina Michaelis</p>
+        </div>
+
+        <div class="plate">
+          <div class="plate-row">
+            <span class="plate-num">150+</span>
+            <span class="plate-label">Fahrzeuge professionell fotografiert</span>
+          </div>
+          <div class="plate-row">
+            <span class="plate-num">5+</span>
+            <span class="plate-label">Jahre Erfahrung in der Automotive-Fotografie</span>
+          </div>
+          <div class="plate-row">
+            <span class="plate-num">24h</span>
+            <span class="plate-label">Antwortzeit auf jede Anfrage</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALERIE TEASER -->
+  <section class="section" id="portfolio" style="background:var(--bg-alt);">
+    <div class="wrap section-inner">
+      <h2 class="section-title">Ein Ausschnitt aus dem Portfolio</h2>
+      <p class="section-lede">Vier Blickwinkel auf Fahrzeuge — von der ruhigen Studioaufnahme bis zur Nacht voller Lichtspuren.</p>
+
+      <div class="cat-grid">
+        <a class="cat-card" href="#">
+          <div class="cat-tag">Nachtfotografie</div>
+          <div class="cat-caption">Wenn die Stadt zur Bühne wird.</div>
+        </a>
+        <a class="cat-card" href="#">
+          <div class="cat-tag">Autos in Bewegung</div>
+          <div class="cat-caption">Geschwindigkeit, eingefroren im Bild.</div>
+        </a>
+        <a class="cat-card" href="#">
+          <div class="cat-tag">Studio &amp; Details</div>
+          <div class="cat-caption">Jede Linie perfekt in Szene gesetzt.</div>
+        </a>
+        <a class="cat-card" href="#">
+          <div class="cat-tag">Firmenkunden</div>
+          <div class="cat-caption">Für Autohäuser &amp; Marken, die auffallen.</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABLAUF -->
+  <section class="section" id="ablauf">
+    <div class="wrap section-inner">
+      <h2 class="section-title">So läuft die Zusammenarbeit ab</h2>
+      <p class="section-lede">Fünf Schritte, von der ersten Nachricht bis zum fertigen Bild in deinem Postfach.</p>
+
+      <div class="timeline">
+        <div class="tl-step">
+          <div class="tl-num">01</div>
+          <div class="tl-title">Anfrage</div>
+          <div class="tl-desc">Du schreibst mir dein Anliegen, ich melde mich innerhalb von 24 Std.</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-num">02</div>
+          <div class="tl-title">Konzept &amp; Termin</div>
+          <div class="tl-desc">Gemeinsam legen wir Location, Stil und Zeitpunkt fest.</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-num">03</div>
+          <div class="tl-title">Shooting</div>
+          <div class="tl-desc">Entspanntes Set, volle Konzentration auf dein Fahrzeug.</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-num">04</div>
+          <div class="tl-title">Auswahl &amp; Bearbeitung</div>
+          <div class="tl-desc">Du erhältst eine Vorauswahl, ich veredle die Favoriten.</div>
+        </div>
+        <div class="tl-step">
+          <div class="tl-num">05</div>
+          <div class="tl-title">Übergabe</div>
+          <div class="tl-desc">Finale Bilder in hoher Auflösung, bereit für Web und Druck.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="cta-band" id="kontakt">
+    <div class="wrap">
+      <h2>Bereit, dein Auto ins beste Licht zu rücken?</h2>
+      <p class="sub">Erzähl mir kurz von deinem Fahrzeug und deiner Idee — den Rest besprechen wir gemeinsam.</p>
+      <div class="hero-actions">
+        <a href="#" class="btn btn-primary">Jetzt unverbindlich anfragen</a>
+      </div>
+      <p class="response-note">Antwort innerhalb von 24 Stunden</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <a href="#home" class="logo">
+        <img class="logo-img" src="logo.png" alt="Art on Wheels — Capture. Create. Inspire.">
+      </a>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <a href="#home">Home</a>
+          <a href="#portfolio">Portfolio</a>
+          <a href="#ueber-mich">Über mich</a>
+          <a href="#preise">Preise</a>
+        </div>
+        <div class="footer-col">
+          <h4>Kontakt</h4>
+          <a href="mailto:hallo@artonwheels.de">hallo@artonwheels.de</a>
+          <a href="#kontakt">Anfrage senden</a>
+        </div>
+        <div class="footer-col">
+          <h4>Social</h4>
+          <a href="#">Instagram</a>
+          <a href="#">Facebook</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Art on Wheels — Kristina Michaelis</span>
+      <span>Capture. Create. Inspire.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks = document.getElementById('navLinks');
+  menuToggle.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+  });
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => navLinks.classList.remove('open'));
+  });
+</script>
+
+</body>
+</html>
